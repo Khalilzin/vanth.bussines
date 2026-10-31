@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b12">
+  <title>Visão Geral | Vanth.bussines</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --bg: #0b0b12;
+      --panel: #15151f;
+      --line: rgba(255, 255, 255, .085);
+      --text: #f5f5f8;
+      --muted: #a3a3b4;
+      --purple: #8b5cf6;
+      --purple-light: #cbb9ff;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    button { color: inherit; cursor: pointer; }
+    :focus-visible { outline: 2px solid #a78bfa; outline-offset: 3px; }
+    .workspace { min-height: 100vh; }
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; z-index: 3; display: flex; flex-direction: column;
+      width: 252px; padding: 26px 14px 14px; background: #101018; border-right: 1px solid var(--line);
+    }
+    .brand { display: block; padding: 0 11px 30px; font-size: 17px; font-weight: 780; letter-spacing: .17em; }
+    .brand small { display: block; margin-top: -4px; color: var(--muted); font-size: 10px; font-weight: 450; letter-spacing: .08em; }
+    .workspace-select { display: flex; align-items: center; gap: 10px; margin-bottom: 31px; padding: 9px; border: 1px solid var(--line); border-radius: 11px; background: #191925; }
+    .workspace-avatar { display: grid; width: 35px; height: 35px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: #37215b; color: #c5abff; font-size: 17px; font-weight: 750; }
+    .workspace-select strong, .workspace-select small { display: block; }
+    .workspace-select strong { font-size: 12px; font-weight: 600; }
+    .workspace-select small, .user-card small { color: var(--muted); font-size: 11px; }
+    .chevron { margin-left: auto; color: #9292a4; }
+    .nav-caption { margin: 0 12px 10px; color: #707085; font-size: 10px; font-weight: 700; letter-spacing: .14em; }
+    .nav-caption.second { margin-top: 29px; }
+    .nav-stack { display: grid; gap: 3px; }
+    .nav-link { display: flex; min-height: 41px; align-items: center; gap: 13px; padding: 0 13px; border-radius: 9px; color: #9c9dae; font-size: 12px; }
+    .nav-link:hover { background: #ffffff0b; color: white; }
+    .nav-link.active { background: #8b5cf620; color: var(--purple-light); }
+    .nav-link svg, .icon { width: 18px; height: 18px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+    .sidebar-bottom { margin-top: auto; }
+    .sidebar-hint { margin-bottom: 12px; padding: 13px; border: 1px solid var(--line); border-radius: 10px; color: #b4adc8; font-size: 10px; letter-spacing: .09em; }
+    .sidebar-hint small { display: block; margin: 4px 0 0 13px; color: var(--muted); font-size: 11px; letter-spacing: 0; }
+    .dot { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: #39b68e; }
+    .user-card { display: flex; align-items: center; gap: 10px; padding: 14px 3px 2px; border-top: 1px solid var(--line); }
+    .user-card strong { display: block; font-size: 12px; }
+    .user-avatar { display: grid; width: 35px; height: 35px; flex: 0 0 auto; place-items: center; border: 1px solid #64547e; border-radius: 50%; background: #343047; color: #d5c0ff; font-weight: 700; }
+    .main-shell { min-width: 0; margin-left: 252px; }
+    .topbar { position: sticky; top: 0; z-index: 2; display: flex; height: 74px; align-items: center; justify-content: space-between; gap: 16px; padding: 0 clamp(20px, 3vw, 52px); border-bottom: 1px solid var(--line); background: rgba(11, 11, 18, .92); backdrop-filter: blur(18px); }
+    .breadcrumb { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 580; }
+    .crumb-root { color: var(--muted); font-weight: 400; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .search-trigger, .primary-button, .outline-button, .icon-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; }
+    .search-trigger { width: 235px; padding: 8px 10px; border: 1px solid var(--line); background: #171821; color: var(--muted); text-align: left; font-size: 12px; }
+    .search-trigger span { flex: 1; }
+    kbd { padding: 1px 6px; border: 1px solid #343443; border-radius: 5px; color: #8f91a3; font-size: 10px; }
+    .primary-button { padding: 9px 14px; border: 1px solid #9e79ff; background: var(--purple); color: white; font-size: 12px; font-weight: 650; white-space: nowrap; }
+    .primary-button:hover { background: #7543e4; }
+    .primary-button .icon { width: 17px; height: 17px; }
+    .outline-button { padding: 10px 14px; border: 1px solid #444456; background: transparent; color: #e5e5ef; font-size: 12px; font-weight: 600; }
+    .icon-button { width: 35px; height: 35px; border: 0; background: transparent; }
+    .icon-button:hover { background: #ffffff10; }
+    .mobile-toggle { display: none; }
+    .new-wrap { position: relative; }
+    .new-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 5; display: none; width: 180px; padding: 6px; border: 1px solid var(--line); border-radius: 10px; background: #191925; box-shadow: 0 12px 36px #0008; }
+    .new-menu.open { display: grid; }
+    .new-menu a { padding: 9px 10px; border-radius: 7px; color: #dddde9; font-size: 12px; }
+    .new-menu a:hover { background: #ffffff0c; }
+    main { max-width: 1500px; margin: auto; padding: 40px clamp(20px, 3vw, 52px) 80px; }
+    .page-header { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 30px; }
+    .eyebrow { margin-bottom: 12px; color: #9b84d5; font-size: 10px; font-weight: 700; letter-spacing: .18em; }
+    h1 { margin: 0 0 10px; font-size: clamp(25px, 3.1vw, 36px); font-weight: 650; letter-spacing: -.048em; line-height: 1.18; }
+    .page-header p { max-width: 600px; margin: 0; color: var(--muted); }
+    .tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; border: 1px solid #594778; border-radius: 6px; background: #8b5cf620; color: #c1a9ff; font-size: 10px; white-space: nowrap; }
+    .tag.gray { border-color: #414354; background: #222432; color: #bcbecb; }
+    .tag.orange { border-color: #72522d; background: #88602b20; color: #e5b77d; }
+    .tag.green { border-color: #2c705b; background: #1b543527; color: #67d3a3; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .stat-card, .panel { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(145deg, #161620, #12131c); }
+    .stat-card { min-height: 136px; padding: 20px 22px; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #9998b0; font-size: 11px; }
+    .stat-icon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: #8b5cf61a; color: #b295ff; }
+    .stat-value { margin-top: 11px; font-size: 32px; font-weight: 650; letter-spacing: -.05em; line-height: 1.1; }
+    .stat-foot { margin-top: 8px; color: var(--muted); font-size: 11px; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .85fr); gap: 16px; }
+    .stack { display: grid; align-content: start; gap: 16px; }
+    .panel { padding: 24px; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .panel-heading h2 { margin: 0; font-size: 16px; letter-spacing: -.02em; }
+    .list-item { display: flex; align-items: center; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .list-item:last-child { border-bottom: 0; }
+    .list-title { margin: 0; font-size: 12px; font-weight: 600; }
+    .list-sub { margin: 2px 0 0; color: var(--muted); font-size: 11px; }
+    .list-right { margin-left: auto; flex: 0 0 auto; }
+    .check-control { width: 18px; height: 18px; accent-color: var(--purple); }
+    .list-item.completed .list-title { color: var(--muted); text-decoration: line-through; }
+    .project-color { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 3px; background: #8b5cf6; }
+    .project-color.teal { background: #31c48d; }
+    .project-color.orange { background: #f0a85e; }
+    .empty { display: flex; min-height: 170px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 28px; color: var(--muted); text-align: center; }
+    .quick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .quick-action { display: grid; gap: 10px; padding: 15px; border: 1px solid var(--line); border-radius: 9px; background: #1d1c29; color: #dddde9; font-size: 12px; text-align: left; }
+    .quick-action:hover { border-color: #7355b4; }
+    .quick-action .icon { color: #b79cff; }
+    .notice { margin-top: 22px; color: #777789; font-size: 11px; text-align: center; }
+    .shade { position: fixed; inset: 0; z-index: 2; display: none; border: 0; background: #0009; }
+    .shade.open { display: block; }
+
+    @media (max-width: 1050px) {
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .sidebar { z-index: 4; transform: translateX(-100%); transition: transform .2s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .main-shell { margin-left: 0; }
+      .topbar { height: 64px; padding: 0 16px; }
+      .mobile-toggle { display: inline-flex; }
+      .breadcrumb { margin-right: auto; }
+      .search-trigger { width: 36px; height: 36px; padding: 8px; }
+      .search-trigger span, .search-trigger kbd, .top-avatar { display: none; }
+      main { padding: 30px 16px 56px; }
+      .page-header { align-items: start; flex-direction: column; }
+      .page-header > .tag { align-self: flex-start; }
+      .panel { padding: 19px; }
+    }
+    @media (max-width: 420px) {
+      .stats-grid { gap: 9px; }
+      .stat-card { min-height: 125px; padding: 15px; }
+      .stat-top { align-items: start; }
+      .stat-value { font-size: 28px; }
+      .panel-heading { align-items: start; }
+      .panel-heading .tag { font-size: 9px; }
+      .quick-grid { gap: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="workspace">
+    <button class="shade" id="shade" aria-label="Fechar menu"></button>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio">VANTH<small>.bussines</small></a>
+      <div class="workspace-select">
+        <span class="workspace-avatar">V</span>
+        <span><strong>Workspace Vanth</strong><small>Área privada</small></span>
+        <span class="chevron" aria-hidden="true">›</span>
+      </div>
+      <p class="nav-caption">ESPAÇO DE TRABALHO</p>
+      <nav class="nav-stack" aria-label="Navegação principal">
+        <a class="nav-link active" href="#inicio" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Visão Geral</a>
+        <a class="nav-link" href="#agenda"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>Calendário</a>
+        <a class="nav-link" href="#tarefas"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1 1 2-2m-3 7 1 1 2-2m-3 7 1 1 2-2"/></svg>Minhas Tarefas</a>
+        <a class="nav-link" href="#notas"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>Notas</a>
+        <a class="nav-link" href="#projetos"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/></svg>Projetos</a>
+      </nav>
+      <p class="nav-caption second">PREFERÊNCIAS</p>
+      <nav class="nav-stack" aria-label="Preferências">
+        <a class="nav-link" href="#integracoes"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1 0l3-3A5 5 0 0 0 13 2.9l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.1 0l-3 3A5 5 0 0 0 11 21.1l1.7-1.7"/></svg>Integrações</a>
+        <a class="nav-link" href="#configuracoes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1)"/></svg>Configurações</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-hint"><span class="dot"></span>AMBIENTE PRIVADO<small>Prévia demonstrativa</small></div>
+        <div class="user-card"><span class="user-avatar">V</span><span><strong>Vanth Workspace</strong><small>Conta de demonstração</small></span><span class="chevron" aria-hidden="true">›</span></div>
+      </div>
+    </aside>
+
+    <div class="main-shell" id="inicio">
+      <header class="topbar">
+        <button class="icon-button mobile-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        <div class="breadcrumb"><span class="crumb-root">Workspace</span><span aria-hidden="true">›</span><span>Visão Geral</span></div>
+        <div class="top-actions">
+          <button class="search-trigger" id="searchButton" aria-label="Buscar em tudo"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>Buscar em tudo...</span><kbd>Ctrl K</kbd></button>
+          <div class="new-wrap">
+            <button class="primary-button" id="newButton" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Novo</button>
+            <div class="new-menu" id="newMenu">
+              <a href="#tarefas">Nova tarefa</a><a href="#agenda">Novo evento</a><a href="#notas">Nova nota</a><a href="#projetos">Novo projeto</a>
+            </div>
+          </div>
+          <span class="user-avatar top-avatar" aria-label="Perfil">V</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="page-header">
+          <div><div class="eyebrow">PAINEL DE PRODUTIVIDADE / VISÃO GERAL</div><h1>Bom dia, Vanth.</h1><p>Seu espaço de trabalho está pronto. Veja o que precisa da sua atenção.</p></div>
+          <span class="tag green"><span class="dot"></span>Workspace privado</span>
+        </section>
+
+        <section class="stats-grid" aria-label="Resumo do workspace">
+          <article class="stat-card"><div class="stat-top"><span>Tarefas pendentes</span><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1 1 2-2m-3 7 1 1 2-2m-3 7 1 1 2-2"/></svg></span></div><div class="stat-value">08</div><div class="stat-foot">Atividades em aberto</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Concluídas</span><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="10"/></svg></span></div><div class="stat-value">24</div><div class="stat-foot">Entregas finalizadas</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Projetos</span><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></div><div class="stat-value">03</div><div class="stat-foot">Projetos cadastrados</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Próximos eventos</span><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span></div><div class="stat-value">02</div><div class="stat-foot">Compromissos futuros</div></article>
+        </section>
+
+        <div class="dashboard-grid">
+          <div class="stack">
+            <section class="panel" id="tarefas">
+              <div class="panel-heading"><h2>Tarefas em destaque</h2><a class="tag gray" href="#tarefas">Ver tarefas <span aria-hidden="true">→</span></a></div>
+              <label class="list-item"><input class="check-control" type="checkbox"><span><span class="list-title">Revisar proposta comercial</span><span class="list-sub">Prazo: 31/10/2026</span></span><span class="tag orange list-right">Urgente</span></label>
+              <label class="list-item"><input class="check-control" type="checkbox"><span><span class="list-title">Preparar materiais da apresentação</span><span class="list-sub">Prazo: 03/11/2026</span></span><span class="tag gray list-right">Alta</span></label>
+              <label class="list-item"><input class="check-control" type="checkbox"><span><span class="list-title">Alinhar próximos passos do projeto</span><span class="list-sub">Sem prazo definido</span></span><span class="tag gray list-right">Média</span></label>
+            </section>
+            <section class="panel" id="projetos">
+              <div class="panel-heading"><h2>Seus projetos</h2><a class="tag gray" href="#projetos">Ver todos <span aria-hidden="true">›</span></a></div>
+              <div class="list-item"><span class="project-color"></span><span><p class="list-title">Portal institucional</p><p class="list-sub">Status: Em andamento</p></span><span class="tag list-right">Ativo</span></div>
+              <div class="list-item"><span class="project-color teal"></span><span><p class="list-title">Planejamento de conteúdo</p><p class="list-sub">Status: Planejamento</p></span><span class="tag green list-right">Novo</span></div>
+              <div class="list-item"><span class="project-color orange"></span><span><p class="list-title">Identidade da marca</p><p class="list-sub">Status: Em revisão</p></span><span class="tag orange list-right">Revisão</span></div>
+            </section>
+          </div>
+          <div class="stack">
+            <section class="panel" id="agenda">
+              <div class="panel-heading"><h2>Agenda em breve</h2><a class="tag gray" href="#agenda">Abrir agenda <span aria-hidden="true">›</span></a></div>
+              <div class="list-item"><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span><span><p class="list-title">Reunião de alinhamento</p><p class="list-sub">Hoje, 14:30</p></span><span class="list-right">Local</span></div>
+              <div class="list-item"><span class="stat-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span><span><p class="list-title">Apresentação do projeto</p><p class="list-sub">03/11/2026, 10:00</p></span><span class="list-right">Local</span></div>
+            </section>
+            <section class="panel" id="notas">
+              <div class="panel-heading"><h2>Acesso rápido</h2></div>
+              <div class="quick-grid">
+                <a class="quick-action" href="#tarefas"><svg class="icon" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1 1 2-2m-3 7 1 1 2-2"/></svg>Nova tarefa</a>
+                <a class="quick-action" href="#agenda"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>Novo evento</a>
+                <a class="quick-action" href="#notas"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8"/></svg>Nova nota</a>
+                <a class="quick-action" href="#projetos"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Novo projeto</a>
+              </div>
+            </section>
+          </div>
+        </div>
+        <p class="notice">Prévia estática do dashboard Vanth.bussines — os dados exibidos são demonstrativos.</p>
+      </main>
+    </div>
+  </div>
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const shade = document.getElementById('shade');
+    const menuToggle = document.getElementById('menuToggle');
+    const newButton = document.getElementById('newButton');
+    const newMenu = document.getElementById('newMenu');
+
+    function closeMobileMenu() {
+      sidebar.classList.remove('open');
+      shade.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = sidebar.classList.toggle('open');
+      shade.classList.toggle('open', isOpen);
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+    shade.addEventListener('click', closeMobileMenu);
+    sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
+    newButton.addEventListener('click', () => {
+      const isOpen = newMenu.classList.toggle('open');
+      newButton.setAttribute('aria-expanded', String(isOpen));
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.new-wrap')) {
+        newMenu.classList.remove('open');
+        newButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        document.getElementById('searchButton').focus();
+      }
+      if (event.key === 'Escape') {
+        closeMobileMenu();
+        newMenu.classList.remove('open');
+        newButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.querySelectorAll('.check-control').forEach(checkbox => {
+      checkbox.addEventListener('change', () => checkbox.closest('.list-item').classList.toggle('completed', checkbox.checked));
+    });
+    document.getElementById('searchButton').addEventListener('click', () => {
+      const query = window.prompt('Busca demonstrativa: digite uma tarefa, projeto ou evento.');
+      if (query) {
+        const match = [...document.querySelectorAll('.list-title')].find(item => item.textContent.toLowerCase().includes(query.toLowerCase()));
+        if (match) {
+          match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          match.closest('.list-item, .panel').animate([{ backgroundColor: '#8b5cf655' }, { backgroundColor: 'transparent' }], { duration: 1000 });
+        } else {
+          window.alert('Nenhum resultado nesta prévia estática.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
