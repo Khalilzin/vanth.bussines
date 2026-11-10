@@ -61,6 +61,23 @@ jobs:
       - name: Production build (CI-only temporary database)
         run: npm run build
 
+      - name: Create Supabase API roles in isolated PostgreSQL fixture
+        run: |
+          node - <<'NODE'
+          const { Client } = require('pg');
+          (async () => {
+            const db = new Client({connectionString: process.env.DATABASE_URL});
+            await db.connect();
+            try {
+              for (const role of ['anon', 'authenticated', 'service_role']) {
+                await db.query('CREATE ROLE ' + role + ' NOLOGIN');
+              }
+            } finally {
+              await db.end();
+            }
+          })().catch(error => { console.error(error.message); process.exitCode = 1; });
+          NODE
+
       - name: Create schema and apply RLS migrations
         run: npm run db:migrate
 
