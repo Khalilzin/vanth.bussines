@@ -1,0 +1,42 @@
+name: Vanth.bussines | Validation
+
+on:
+  pull_request:
+    paths:
+      - 'Vanth-bussines-FullStack-Source/Vanth-bussines/**'
+      - '.github/workflows/vanth-bussines-checks.yml'
+  push:
+    branches:
+      - 'fix/login-otp-rls-integration-20261110'
+    paths:
+      - 'Vanth-bussines-FullStack-Source/Vanth-bussines/**'
+      - '.github/workflows/vanth-bussines-checks.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: Vanth-bussines-FullStack-Source/Vanth-bussines
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check Node version
+        run: node --version
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Static tests
+        run: npm test
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Production build (without application secrets)
+        run: npm run build
