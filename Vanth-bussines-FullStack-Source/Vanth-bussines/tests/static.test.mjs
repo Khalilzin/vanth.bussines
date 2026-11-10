@@ -7,3 +7,9 @@ test('exact product name',()=>{assert.equal(JSON.parse(read('package.json')).nam
 test('required routes exist',()=>{for(const route of ['auth/login','auth/register','auth/verify-email','auth/verify-login','auth/logout','auth/reset-password','tasks','notes','projects','events','google/connect','google/callback','google/sync','google/disconnect','cron/sync']) assert.ok(existsSync(join(root,'app/api',route,'route.ts')),route)});
 test('server-side credential safety',()=>{const env=read('.env.example');assert.match(env,/GOOGLE_CLIENT_SECRET/);assert.doesNotMatch(env,/^GOOGLE_CLIENT_SECRET=\S/m);assert.match(read('lib/security.ts'),/aes-256-gcm/);assert.match(read('lib/auth.ts'),/httpOnly:true/)});
 test('SQL schema has unique sync keys and owner boundaries',()=>{const sql=read('db/migrations/0001_init.sql');assert.match(sql,/UNIQUE INDEX IF NOT EXISTS events_google_unique/);assert.match(sql,/workspace_id uuid NOT NULL REFERENCES workspaces/);assert.match(sql,/auth_challenges/)});
+
+test('login OTP retrieves pending token hash from the database',()=>{
+ const code=read('lib/challenges.ts');
+ assert.match(code,/SELECT id,code_hash,attempts,login_token_hash FROM auth_challenges/);
+ assert.match(code,/sha256\(pending\)!==challenge\.login_token_hash/);
+});
