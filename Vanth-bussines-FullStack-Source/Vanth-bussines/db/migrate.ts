@@ -1,4 +1,6 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+config();
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { Pool } from 'pg';
