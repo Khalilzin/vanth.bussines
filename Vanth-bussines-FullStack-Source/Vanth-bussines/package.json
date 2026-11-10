@@ -8,7 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:migrate": "tsx db/migrate.ts",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/static.test.mjs",
+    "test:integration": "node --test tests/database.integration.test.mjs tests/http.integration.test.mjs"
   },
   "dependencies": {
     "next": "^16.0.0",
