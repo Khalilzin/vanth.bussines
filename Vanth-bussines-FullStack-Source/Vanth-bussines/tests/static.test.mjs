@@ -13,3 +13,26 @@ test('login OTP retrieves pending token hash from the database',()=>{
  assert.match(code,/SELECT id,code_hash,attempts,login_token_hash FROM auth_challenges/);
  assert.match(code,/sha256\(pending\)!==challenge\.login_token_hash/);
 });
+
+test('security migration and versioned migration runner exist',()=>{
+ const migration=read('db/migrations/0002_public_security.sql');
+ for(const table of ['users','sessions','workspaces','workspace_members','projects','tasks','notes','auth_challenges','rate_limits']){
+  assert.ok(migration.includes('ALTER TABLE public.'+table+' ENABLE ROW LEVEL SECURITY;'),table);
+  assert.ok(migration.includes('REVOKE ALL PRIVILEGES ON TABLE public.'+table+' FROM anon, authenticated;'),table);
+ }
+ const runner=read('db/migrate.ts');
+ assert.match(runner,/readdirSync\(dir\)/);
+ assert.match(runner,/client\.query\('ROLLBACK'\)/);
+ assert.match(runner,/\.env\.local/);
+});
+
+test('private route and session boundaries are present',()=>{
+ for(const resource of ['tasks','projects','notes']){
+  const api=read('app/api/'+resource+'/route.ts');
+  assert.match(api,/requireUser\(\)/);
+  assert.match(api,/workspace_id=\$2/);
+  assert.match(api,/assertOrigin\(req\)/);
+ }
+ assert.match(read('lib/auth.ts'),/s\.revoked_at IS NULL AND s\.expires_at>now\(\)/);
+ assert.match(read('lib/http.ts'),/Origem inválida/);
+});
