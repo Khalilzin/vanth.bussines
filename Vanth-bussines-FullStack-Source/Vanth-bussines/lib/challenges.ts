@@ -14,7 +14,7 @@ export async function issueChallenge(userId:string,email:string,type:Type){
 }
 export async function consumeChallenge(userId:string,type:Type,code:string,pending?:string){
  if(!/^\d{6}$/.test(code))throw new HttpError(400,'Código inválido');
- const challenge=await one<{id:string,code_hash:string,attempts:number,login_token_hash:string|null}>(`SELECT id,code_hash,attempts FROM auth_challenges WHERE user_id=$1 AND type=$2 AND consumed_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1`,[userId,type]);
+ const challenge=await one<{id:string,code_hash:string,attempts:number,login_token_hash:string|null}>(`SELECT id,code_hash,attempts,login_token_hash FROM auth_challenges WHERE user_id=$1 AND type=$2 AND consumed_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1`,[userId,type]);
  if(!challenge)throw new HttpError(400,'Código expirado ou não encontrado');
  if(type==='login'&&(!pending||!challenge.login_token_hash||sha256(pending)!==challenge.login_token_hash))throw new HttpError(401,'Confirmação de senha expirada. Entre novamente.');
  if(challenge.attempts>=5)throw new HttpError(429,'Limite de tentativas atingido');

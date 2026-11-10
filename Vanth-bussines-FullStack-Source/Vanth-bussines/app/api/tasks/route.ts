@@ -4,7 +4,7 @@ import {requireUser} from '@/lib/auth';
 import {one,query} from '@/lib/db';
 import {assertOrigin,body,failure,response,HttpError} from '@/lib/http';
 import {taskSchema,uuid} from '@/lib/validation';
-export async function GET(){try{const u=await requireUser();return response({items:await query('SELECT t.*,p.name project_name FROM tasks t LEFT JOIN projects p ON p.id=t.project_id WHERE t.workspace_id=$1 ORDER BY CASE t.status WHEN \'done\' THEN 1 ELSE 0 END, t.due_at ASC NULLS LAST,t.created_at DESC LIMIT 500',[u.workspace_id])})}catch(e){return failure(e)}}
+export async function GET(){try{const u=await requireUser();return response({items:await query('SELECT t.*,p.name project_name FROM tasks t LEFT JOIN projects p ON p.id=t.project_id AND p.workspace_id=t.workspace_id WHERE t.workspace_id=$1 ORDER BY CASE t.status WHEN \'done\' THEN 1 ELSE 0 END, t.due_at ASC NULLS LAST,t.created_at DESC LIMIT 500',[u.workspace_id])})}catch(e){return failure(e)}}
 export async function POST(req:NextRequest){try{assertOrigin(req);const u=await requireUser();const v=taskSchema.parse(await body(req));
  if(v.project_id&&!await one('SELECT id FROM projects WHERE workspace_id=$1 AND id=$2',[u.workspace_id,v.project_id]))throw new HttpError(400,'Projeto inválido');
  const item=await one('INSERT INTO tasks(workspace_id,project_id,title,description,status,priority,due_at,completed_at) VALUES($1,$2,$3,$4,$5,$6,$7,CASE WHEN $5=\'done\' THEN now() ELSE NULL END) RETURNING *',[u.workspace_id,v.project_id??null,v.title,v.description,v.status,v.priority,v.due_at??null]);return response({item},201)
