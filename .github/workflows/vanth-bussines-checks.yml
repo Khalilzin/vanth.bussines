@@ -18,10 +18,30 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: vanth_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d vanth_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     defaults:
       run:
         working-directory: Vanth-bussines-FullStack-Source/Vanth-bussines
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vanth_ci
+      APP_URL: http://127.0.0.1:3000
+      TEST_HTTP_BASE_URL: http://127.0.0.1:3000
+      AUTH_SECRET: ci-only-ephemeral-auth-secret-never-use-in-production
+      ALLOW_REGISTRATION: 'false'
     steps:
       - name: Checkout source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -38,5 +58,33 @@ jobs:
       - name: TypeScript check
         run: npm run typecheck
 
-      - name: Production build (without application secrets)
+      - name: Production build (CI-only temporary database)
         run: npm run build
+
+      - name: Create schema and apply RLS migrations
+        run: npm run db:migrate
+
+      - name: Verify database policies and workspace ownership
+        run: node --test tests/database.integration.test.mjs
+
+      - name: Start Next.js server and wait for HTTP readiness
+        run: |
+          (npm run start -- --hostname 127.0.0.1 > /tmp/vanth-next.log 2>&1 & echo $! > /tmp/vanth-next.pid)
+          for i in $(seq 1 40); do
+            if curl -fsS -o /dev/null http://127.0.0.1:3000/login; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/vanth-next.log
+          exit 1
+
+      - name: Test actual HTTP sessions, authorization, CRUD and CSRF
+        run: node --test tests/http.integration.test.mjs
+
+      - name: Show server output on failure
+        if: failure()
+        run: |
+          if [ -f /tmp/vanth-next.log ]; then
+            tail -n 100 /tmp/vanth-next.log
+          fi
