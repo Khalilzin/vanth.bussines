@@ -8,7 +8,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 (async () => {
  const dir = resolve(process.cwd(), 'db/migrations');
- const files = readdirSync(dir).filter(name => /^\\d+_[\\w-]+\\.sql$/.test(name)).sort();
+ const files = readdirSync(dir).filter(name => /^\d+_[\w-]+\.sql$/.test(name)).sort();
  if (!files.length) throw new Error('Nenhuma migração encontrada');
  const client = await pool.connect();
  try {
